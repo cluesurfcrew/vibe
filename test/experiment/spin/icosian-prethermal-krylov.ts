@@ -1,5 +1,5 @@
-// STATE 2026-10-01: GATES WRITTEN, REGISTERED, GATE RUN STARTED on the work droplet (6 threads, after E-SPN-0186), no
-// gate moved.
+// STATE 2026-10-02: GATE RUN DONE (4 threads, 20,255 s), PARTIAL: every hypothesis held and C2 missed its threshold by
+// 1.9e-11 (GATE RUN below). No gate moved. The droplet run of 2026-10-01 left no result in the package.
 // DOES THE SMALL-ANGLE 2I BEAT KEEP THE ORDERED VACUUM ON A PATCH WITH A NEAR-CONTINUOUS SPECTRUM (E-SPN-0185, OPEN-STR-02)?
 // E-SPN-0154 found, on the husk tetrahedron (3 loops, 29,288 Gauss states, a 1,589-state symmetric sector), that the
 // prepared ground state of H = H_E + 8 H_B is lost within a beat for 1/delta up to 12, survives tau = 3, 10, 40, 40 beats
@@ -81,6 +81,34 @@
 // computed before the gates above were written. One smoke AFTER the gates (tmp/st-smoke-a.log, 264 s): the whole run
 // with the TETRAHEDRON in place of the 4-loop patch, ladder 12, 16, 64, 96 and runs to N = 65, to exercise every path:
 // every control and instrument held (I1 to 1e-11, I6 bit for bit); no 4-loop survival was computed. No gate moved.
+//
+// GATE RUN (2026-10-02, 4 threads, 20,255 s): PARTIAL, by the rule fixed above, because C2 missed. No gate moved and none
+// was rerun.
+//  - The 4-loop patch, r = 8: tau 1, 1, 8, 25, 32, 398, inf at 1/delta 11.85, 16.29, 23.55, 32.29, 48.60, 64.16, 96.24.
+//    The tetrahedron by the same engine: 1, 3, 10, 40, 40, inf, inf (E-SPN-0154's four finite points reproduce).
+//  - H1 holds: 4 finite points (1/delta 23.55 to 64.16, span 2.72), the fit c 0.08636, a 0.048, worst miss 0.779 under
+//    ln 3, and c inside [0.0122, 0.1571].
+//  - H2 holds: c 0.08636 against the tetrahedron's 0.07782 by the same engine, a factor 1.11.
+//  - H3 holds: at 1/delta 96.24 tau > 1,025, the running-mean fidelity 0.9974 at N 1,025.
+//  - H4 holds: tau(64.16) = 398, inside [70, 630]. The tetrahedron is kept there; the 4-loop patch is not, so the step
+//    from 40 beats to kept on the tetrahedron was finite size, as predicted.
+//  - Controls: C1 holds (1/delta 1.016: running mean 3.5e-6 at N 65, tau 1). C3 holds (one orbit, kernel 1 + 0 i, A(N) =
+//    1 to N 33). C2 FAILS: the least fidelity of the commuting beat from the constant state is 0.99999999988081 at both
+//    1/delta 1 and 16, below the gate 1 - 1e-10 by 1.9e-11.
+//  - Instrument: I1 (tetrahedron E0 to the dense sector's digits, fidelities to 9.9e-12 to N 257), I2 (1.2e-13), I3
+//    (unitarity at most 2.7e-11), I4 (orbits = Burnside, 0 n_B mismatches of 207,984 sampled), I5 (E0 130.4163819231,
+//    residual 1.28e-8, the Weyl start the same to 1.7e-10), I6 (1 and 4 threads bit for bit) all hold.
+//  - READ: the 4-loop plaquette 0.8581 and perimeter-4 loop 0.8295 of psi0. Triangle (9 orbits) kept at every point;
+//    rhombus (296 orbits) tau 1 and 79 at 1/delta 11.9 and 16.3, kept from 23.5 on.
+//  - READ AFTER THE GATE (not a gate, and the verdict stands): C2's deficit is the same, 1.19e-10, at two beat angles 16
+//    times apart, and the same control held on the tetrahedron (29,288 orbits) in the smoke. A deficit that does not
+//    move with the angle reads as the start's normalization at 3,460,496 orbits (rounding in sums of that length is of
+//    that order), not as a kernel whose trivial-irrep weight is off. Not tested here; a compensated normalization of
+//    the constant state would test it.
+//  - ALSO SEEN: the restarted Lanczos for psi0 reached an estimate of 1.28e-8 in 2 cycles and then ran cycles 3 to 12 at
+//    1 step each with no progress: its invariant-subspace stop (1e-10 (|a| + 1), 1.3e-8 here) sits above LANCZOS_TOL
+//    1e-9, so it cannot reach the tolerance once the residual lies between them. It cost about 2.5 minutes, and I5's
+//    1e-6 gate held.
 //
 // Depth L2 (Floquet prethermalization of a finite-group lattice gauge theory on a husk patch; the beat's angle is a ring
 // unit of the vibe ring, the register is a hand-built lattice gauge theory, not the rule). DETERMINISM: no random
@@ -197,7 +225,7 @@ export default experiment({
   id: 'spin/icosian-prethermal-krylov',
   code: 'E-SPN-0185',
   title:
-    'the small-angle 2I beat on a 4-loop husk patch (3,460,496 Gauss orbits), run matrix free: pending the gate run',
+    'the small-angle 2I beat keeps the ordered vacuum on a 4-loop husk patch (3,460,496 Gauss orbits) at 1/delta 96, and the tetrahedron\'s step to kept was finite size, partial (control C2 missed by 1.9e-11): tau 8, 25, 32, 398 at 1/delta 23.6, 32.3, 48.6, 64.2 fit ln tau = 0.048 + 0.0864/delta, inside the ADHH window [0.0122, 0.157] and 1.11 times the tetrahedron\'s 0.0778; tau(64.2) 398 where the tetrahedron is kept; running-mean fidelity 0.9974 at N 1,025 at 1/delta 96.2',
   category: 'spin',
   substrates: ['3434'],
   depth: 'L2',
