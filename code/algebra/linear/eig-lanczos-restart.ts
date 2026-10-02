@@ -3,8 +3,8 @@
 // memory is `steps` vectors, not the whole Krylov history (eig-lanczos keeps every basis vector and returns values
 // only). Each cycle runs `steps` Lanczos steps from the current vector with full reorthogonalization inside the cycle,
 // diagonalizes the tridiagonal, and restarts from the lowest Ritz vector, until the Ritz residual estimate
-// beta_m |s_m| falls under the tolerance; the returned residual is then measured with one more application,
-// ||A x - lambda x||.
+// beta_m |s_m| falls under the tolerance, or a cycle cannot grow past its first step; the returned residual is then
+// measured with one more application, ||A x - lambda x||, so a caller gates on that and not on the tolerance.
 //
 // DETERMINISM: the start vector is the caller's (no random numbers here). An optional `project` is applied after every
 // application (a symmetry projection that the operator commutes with, against rounding drift).
@@ -135,7 +135,9 @@ export function lowestPair(input: {
       `lanczos cycle ${cycle}: ${m} steps, value ${value.toFixed(10)}, next ${next.toFixed(6)}, estimate ${estimate.toExponential(2)}`,
     )
 
-    if (estimate <= input.tolerance) {
+    // a cycle of one step met the invariant-subspace stop at once, so every later cycle from this vector repeats it: the
+    // residual sits between that stop and the tolerance and cannot fall further (E-SPN-0185 ran 10 such cycles)
+    if (estimate <= input.tolerance || m === 1) {
       break
     }
   }
