@@ -1,6 +1,7 @@
-// STATE 2026-10-01: GATES WRITTEN, REGISTERED, GATE RUN STARTED on the work droplet (6 threads), no gate moved. The
-// instrument I1 was re-probed first with the fixed Lanczos restart (tmp/st-probe6.log): the unfixed Q8 register equals
-// the orbit register at the vacuum, (0,2) and (0,4) to 9.8e-11, 4.7e-10 and 2.1e-10.
+// STATE 2026-10-02: GATE RUN DONE (4 threads, 3,126 s), FAIL on H2, no gate moved (GATE RUN below). The droplet run of
+// 2026-10-01 left no result in the package. The instrument I1 was re-probed first with the fixed Lanczos restart
+// (tmp/st-probe6.log): the unfixed Q8 register equals the orbit register at the vacuum, (0,2) and (0,4) to 9.8e-11,
+// 4.7e-10 and 2.1e-10.
 // IS THERE A STRING IN THE KEPT 2I VACUUM, AND WHAT DOES IT COST A LINK (E-SPN-0186, OPEN-STR-02)? E-SPN-0154 kept the
 // ordered vacuum of H = H_E + 8 H_B on a husk tetrahedron under a small-angle beat, and E-SPN-0185 asks the same on a
 // 4-loop patch. Neither reads the string: "every pair of the tetrahedron's docks is one link apart, so a static pair has
@@ -69,6 +70,26 @@
 // dropped; Q8 on strip-3 at r = 8 (orbit register: vacuum 41.158, pairs 41.339 and 41.519) against the unfixed
 // register. tmp/st-probe5.log: the truncated registers' sizes and the cost of one charged application (no energy read).
 // No 2I energy at r > 0 was computed before the gates above were written.
+//
+// GATE RUN (2026-10-02, 4 threads, 3,126 s): FAIL on H2, by the rule fixed above. No gate moved and none was rerun.
+//  - H1 holds: on strip-5 at B_5, r = 8, V(0,2) 2.012375 < V(0,4) 3.458960 < V(0,6) 5.162741. The kept vacuum carries a
+//    string at the patch scale.
+//  - H2 fails: the increments are dV2 1.446586 and dV3 1.703781, ratio 1.1778, past the 15% gate.
+//  - H3 holds: sigma(8) = 1.575183, 0.525 of the strong-coupling 3.
+//  - Calibration: K1 holds (strip-3 B_5 against untruncated: V(0,2) 2.016758 / 1.980702, V(0,4) 3.809270 / 3.725238,
+//    1.8% and 2.3%); K2 holds (strip-4 B_5 against B_10: 2.012909 / 1.970650, 3.505821 / 3.472154, 2.1% and 1.0%).
+//  - Controls: C1 vacuum -1.3e-13, V 3 and 6; C2 reversed 27 and 54, dropped 9 and 18; C3 the one-dock pair 86.572488
+//    against the vacuum 86.572488. Instrument: I1 Q8 equal to the unfixed register (residuals to 5.9e-9), I2 orbits equal
+//    Burnside on every register and n_B has 0 mismatches, the table to 1.7e-16; I3 the largest residual 2.7e-9 and drift
+//    2.5e-16 over 63 levels; I4 the Weyl starts give the Wilson line's energies.
+//  - READ: the untruncated strip-3 loosens monotonically with r: V(0,2) 3, 2.541, 2.273, 2.111, 1.981 and V(0,4) 6,
+//    4.986, 4.349, 3.978, 3.725 at r 0, 1, 2, 4, 8. The middle pair sits below the end pair: V(2,4) 1.762 against
+//    V(0,2) 2.013 on strip-4 B_5, and 1.723 against 2.012 on strip-5 B_5.
+//  - READ AFTER THE GATE (not a gate, and the verdict stands): on strip-5 dock 6 is an end of the strip, as dock 0 is,
+//    so V(0,6) spans two strip ends and V(0,4) one. The end excess V(0,2) - V(2,4) = 0.290 on strip-5 is the size of
+//    dV3 - dV2 = 0.257. So the nonlinearity H2 caught reads as the strip's end effect, not as a bending string. Testing
+//    that needs pairs placed away from both ends (a strip of 7 or more triangles), which B_5 does not reach (33^7 =
+//    4.3e10 configurations).
 //
 // Depth L2 (the static potential of a finite-group lattice gauge theory on a husk strip, Hamiltonian, truncated and
 // calibrated; the register is hand-built, not the rule). DETERMINISM: no random numbers; the Lanczos starts are the
@@ -145,7 +166,7 @@ export default experiment({
   id: 'spin/icosian-strip-string',
   code: 'E-SPN-0186',
   title:
-    'the static 2I pair on a husk strip of 3 to 5 triangles at the kept coupling, truncated near the identity and calibrated: pending the gate run',
+    'a string in the kept 2I vacuum on a husk strip, loosened but not linear at the patch scale, fail on H2: on strip-5 (B_5, r 8, calibrated against the untruncated strip-3 and B_10 on strip-4 within 2.3%) V(0,2) 2.0124 < V(0,4) 3.4590 < V(0,6) 5.1627, tension 1.575 (0.525 of the strong-coupling 3), but the increments 1.4466 and 1.7038 differ by 18%; the end pair sits 0.29 above the middle pair, the size of the bend',
   category: 'spin',
   substrates: ['3434'],
   depth: 'L2',
